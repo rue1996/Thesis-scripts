@@ -1,3 +1,8 @@
+#6th-step
+#Creating figures
+#Section: 2.5.3 Annotation and spatial mapping of cell types (Cell2location)
+#Code adapted from: https://cell2location.readthedocs.io/en/latest/notebooks/cell2location_tutorial.html
+
 import sys
 import scanpy as sc
 import anndata
