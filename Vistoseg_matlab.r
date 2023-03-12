@@ -1,4 +1,6 @@
 #Using matlab
+#Section: 2.5.2 Histology image and segmentation (Vistoseg)
+#code adapted from: http://research.libd.org/VistoSeg/
 
 fname='/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/Visto/4_year_old_T2.tif';
 N=5;
@@ -13,7 +15,6 @@ mask='/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/Vist
 jsonname='/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/run_spaceranger_count_DH1/outs/spatial/scalefactors_json.json';
 posname='/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/run_spaceranger_count_DH1/outs/spatial/tissue_positions_list.csv';
 countNuclei(mask,jsonname,posname)
-#Deleted output in winscp but its in the folder vistoseg using gui
 
 
 fname='/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_2/raw_data/Visto/4_year_old_T1.tif';
