@@ -1,3 +1,7 @@
+#3rd-step
+#Creating the visium anndata object
+#Code adapted from: https://cell2location.readthedocs.io/en/latest/notebooks/cell2location_short_demo.html
+
 import sys
 import scanpy as sc
 import anndata
