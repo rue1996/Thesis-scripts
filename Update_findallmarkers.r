@@ -1,4 +1,6 @@
- #Extract metadata from the cell2location object using python
+#Obtaining genes that make up the leiden clusters identified by cell2location
+#Section: 2.5.4 Seurat FindAllmarkers
+#Extract metadata from the cell2location object using python
  
 import scanpy as sc
 
@@ -21,6 +23,7 @@ library(hdf5r)
 library(data.table)
 library(tidyverse)
 
+#Adding leiden clusters into seurat objects
 juvenile_4yr_DH1 <- readRDS("/scratch/mshruv003/Seurat_objects_converted_from_cell2loc/updated_visium_4yr_seurat.rds")
 scanpy_4yr_DH1 <- read.csv("/scratch/mshruv003/Updated_integrated_MTG_annotation/metadata_leiden_n21_res08.csv")
 leiden <- as.data.frame(scanpy_4yr_DH1$leiden)
@@ -126,7 +129,7 @@ juvenile_first15yr_DH2 <- readRDS("/scratch/mshruv003/Seurat_objects_converted_f
 adult_31yr_DH3 <- readRDS("/scratch/mshruv003/Seurat_objects_converted_from_cell2loc/adult_31yr_DH3_seurat.rds")
 adult_31yr_DH4 <- readRDS("/scratch/mshruv003/Seurat_objects_converted_from_cell2loc/adult_31yr_DH4_seurat.rds")
 
-
+#Merging the seurat objects
 brain.merge3 <- merge(juvenile_4yr_DH1, y = c(juvenile_4yr_DH2, juvenile_2nd_15yr_DH3, juvenile_2nd_15yr_DH4, juvenile_first15yr_DH1, juvenile_first15yr_DH2, adult_31yr_DH3, adult_31yr_DH4), add.cell.ids = c("DH1", "DH2", "DH3", "DH4", "DH1a", "DH2a", "DH3a", "DH4a"), project = "Visium") 
 leiden_clusters<- read.csv("/scratch/mshruv003/Updated_integrated_MTG_annotation/metadata_leiden_n21_res08.csv")
 leiden_cell2loc <- as.data.frame(leiden_clusters$leiden)
@@ -175,7 +178,6 @@ Ave_exp <- AverageExpression(
  
 png("WM_dittoheatmap.png")
 pdf("WM_dittoheatmap2.pdf")
-
 
 Ave_exp@meta.data$sample <- NA
 Ave_exp@meta.data$sample[which(str_detect(rownames(x = Ave_exp@meta.data),"^6_15_year_old_T1_B1"))] <- "15_year_old_T1_B1"
