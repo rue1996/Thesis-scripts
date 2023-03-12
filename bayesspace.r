@@ -1,3 +1,7 @@
+#Bayesspace figures for the genes of interest
+#Section: 2.5.5 Enhancement of spatial transcriptomic data visualisation (BayesSpace)
+#Code adapted from: https://edward130603.github.io/BayesSpace/articles/BayesSpace.html
+
 library(BayesSpace)
 library(ggplot2)
 library(SingleCellExperiment)
