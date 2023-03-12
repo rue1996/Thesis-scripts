@@ -1,3 +1,6 @@
+#Creating figures for section: 3.6 Identification and verification of layer-specific cell types
+#Code adapted from: https://cell2location.readthedocs.io/en/latest/notebooks/cell2location_tutorial.html
+
 import scanpy as sc
 import anndata
 import pandas as pd
