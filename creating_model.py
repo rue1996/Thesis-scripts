@@ -1,3 +1,7 @@
+#5th-step
+#Training the model
+#Code adapted from: https://cell2location.readthedocs.io/en/latest/notebooks/cell2location_tutorial.html
+
 import sys
 import scanpy as sc
 import anndata
