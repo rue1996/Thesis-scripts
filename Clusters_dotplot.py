@@ -1,4 +1,5 @@
 #Creating leiden clusters dotplot
+#Section: 3.8 Leiden clustering
 #Code adapted from: https://github.com/vitkl/cell2location_paper/blob/master/notebooks/mouse_brain_visium/analysis_4_Fig3E_single_section.ipynb
 
 import sys
