@@ -1,3 +1,6 @@
+#First_step
+#code adapted from 10X Genomics (https://support.10xgenomics.com/spatial-gene-expression/software/pipelines/latest/using/count)
+
 module load software/spaceranger-1.3.0
 spaceranger count --id=run_spaceranger_count_DH1 \
 --transcriptome=/scratch/mshruv003/visium_08_10_21/Hockman_Visium/X201SC21082979-Z01-F001_01/raw_data/refdata-gex-GRCh38-2020-A \
