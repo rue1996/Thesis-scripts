@@ -3,15 +3,17 @@
 #Section: 2.5.2 Histology image and segmentation (Vistoseg)
 #code adapted from: http://research.libd.org/VistoSeg/
 
+#Nuclei Segmentation
 fname='/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/Visto/4_year_old_T2.tif';
 N=5;
 VNS('/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/Visto/4_year_old_T2.tif', 5)
 
-
+#Refining Segmentation
 fname='/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/Visto/4_year_old_T2.tif';
 M=1;
 refineVNS('/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/Visto/4_year_old_T2.tif', 1)
 
+#Obtaining the nuclei
 mask='/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/Visto/4_year_old_T2_nuclei.mat';
 jsonname='/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/run_spaceranger_count_DH1/outs/spatial/scalefactors_json.json';
 posname='/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_1/raw_data/run_spaceranger_count_DH1/outs/spatial/tissue_positions_list.csv';
