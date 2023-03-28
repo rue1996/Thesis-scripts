@@ -3562,7 +3562,8 @@ with mpl.rc_context({'figure.figsize': (20, 20)}):
         circle_diameter=9,
         colorbar_position='right'
     ), plt.savefig("DH4a_31yr_Oligo_clusters.pdf")
-	
+
+# Leiden_clustering	
 # compute KNN using the cell2location output stored in adata.obsm
 sc.pp.neighbors(adata_vis, use_rep='q05_cell_abundance_w_sf',
                 n_neighbors = 21)
@@ -3712,6 +3713,7 @@ with mpl.rc_context({'axes.facecolor':  'black',
     sc.pl.spatial(slide, color=['region_cluster'],
                   size=1.3, img_key='hires', alpha=0.5, save="DH4_spatial_cluster_region_31yr_n21_res0.8.pdf")
 
+#Non negative matrix factorization step
 
 from cell2location import run_colocation
 res_dict, adata_vis = run_colocation(
