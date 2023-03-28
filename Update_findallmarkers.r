@@ -23,6 +23,308 @@ library(hdf5r)
 library(data.table)
 library(tidyverse)
 
+#Creating seurat objects
+#Code adapted from https://satijalab.org/seurat/articles/spatial_vignette.html
+
+DH2_1 <- Load10X_Spatial(
+  data.dir = "/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_2/raw_data/run_spaceranger_count_DH2/outs",
+  filename = "/filtered_feature_bc_matrix.h5",
+  assay = "Spatial",
+  slice = "DH2_2",
+  filter.matrix = TRUE,
+  to.upper = FALSE,
+  image = NULL,
+)
+
+mt.genes <- rownames(DH2_1)[grep("^MT-",rownames(DH2_1))]
+C<-GetAssayData(object = DH2_1, slot = "counts")
+percent.mito <- colSums(C[mt.genes,])/Matrix::colSums(C)*100
+DH2_1 <- AddMetaData(DH2_1, percent.mito, col.name = "percent.mito")
+DH2_1 <- DH2_1[-(which(rownames(DH2_1) %in% as.factor(mt.genes))),]
+
+DH2_1 <- SCTransform(DH2_1, assay = "Spatial", verbose = FALSE)
+
+DH2_1 <- RunPCA(DH2_1, assay = "SCT", verbose = FALSE)
+DH2_1 <- FindNeighbors(DH2_1, reduction = "pca", dims = 1:30)
+DH2_1 <- FindClusters(DH2_1, verbose = FALSE, resolution = 0.8)
+DH2_1 <- RunUMAP(DH2_1, reduction = "pca", dims = 1:30)
+
+DimPlot(DH2_1, reduction = "umap", label = TRUE)
+SpatialDimPlot(DH2_1, image.alpha = 0, label = FALSE, pt.size.factor = 1.4)
+
+allen_reference <- readRDS("/scratch/mshruv003/visium_08_10_21/Allen_Brain_Data/allen.rds")
+library(dplyr)
+allen_reference <- SCTransform(allen_reference, ncells = 3000, verbose = FALSE) %>%
+    RunPCA(verbose = FALSE) %>%
+    RunUMAP(dims = 1:30)
+	
+anchors <- FindTransferAnchors(reference = allen_reference, query = DH2_1, normalization.method = "SCT")
+predictions.assay <- TransferData(anchorset = anchors, refdata = allen_reference$subclass_label, prediction.assay = TRUE,
+    weight.reduction = DH2_1[["pca"]], dims = 1:30)
+DH2_1[["predictions"]] <- predictions.assay
+
+DefaultAssay(DH2_1) <- "predictions"
+SpatialFeaturePlot(DH2_1, features = c("L2/3 IT", "L4"), pt.size.factor = 1.6, ncol = 2, crop = TRUE)
+
+saveRDS <- (DH2_1, file = "juvenile_4yr_DH2_1_seurat.rds")
+
+DH3_1 <- Load10X_Spatial(
+  data.dir = "/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_3/raw_data/run_spaceranger_count_DH3/outs",
+  filename = "/filtered_feature_bc_matrix.h5",
+  assay = "Spatial",
+  slice = "DH3_1",
+  filter.matrix = TRUE,
+  to.upper = FALSE,
+  image = NULL,
+)
+
+mt.genes <- rownames(DH3_1)[grep("^MT-",rownames(DH3_1))]
+C<-GetAssayData(object = DH3_1, slot = "counts")
+percent.mito <- colSums(C[mt.genes,])/Matrix::colSums(C)*100
+DH3_1 <- AddMetaData(DH3_1, percent.mito, col.name = "percent.mito")
+DH3_1 <- DH3_1[-(which(rownames(DH3_1) %in% as.factor(mt.genes))),]
+
+DH3_1 <- SCTransform(DH3_1, assay = "Spatial", verbose = FALSE)
+
+DH3_1 <- RunPCA(DH3_1, assay = "SCT", verbose = FALSE)
+DH3_1 <- FindNeighbors(DH3_1, reduction = "pca", dims = 1:30)
+DH3_1 <- FindClusters(DH3_1, verbose = FALSE, resolution = 0.8)
+DH3_1 <- RunUMAP(DH3_1, reduction = "pca", dims = 1:30)
+
+DimPlot(DH3_1, reduction = "umap", label = TRUE)
+SpatialDimPlot(DH3_1, image.alpha = 0, label = FALSE, pt.size.factor = 1.4)
+
+allen_reference <- readRDS("/scratch/mshruv003/visium_08_10_21/Allen_Brain_Data/allen.rds")
+library(dplyr)
+allen_reference <- SCTransform(allen_reference, ncells = 3000, verbose = FALSE) %>%
+    RunPCA(verbose = FALSE) %>%
+    RunUMAP(dims = 1:30)
+	
+anchors <- FindTransferAnchors(reference = allen_reference, query = DH3_1, normalization.method = "SCT")
+predictions.assay <- TransferData(anchorset = anchors, refdata = allen_reference$subclass_label, prediction.assay = TRUE,
+    weight.reduction = DH3_1[["pca"]], dims = 1:30)
+DH3_1[["predictions"]] <- predictions.assay
+
+DefaultAssay(DH3_1) <- "predictions"
+SpatialFeaturePlot(DH3_1, features = c("L2/3 IT", "L4"), pt.size.factor = 1.6, ncol = 2, crop = TRUE)
+
+saveRDS(DH3_1, file = "juvenile_2nd_15yr_DH3_1_seurat.rds")
+
+
+DH4_1 <- Load10X_Spatial(
+  data.dir = "/scratch/mshruv003/visium_18_01_22/X201SC21111924-Z01-F001_2/raw_data/run_spaceranger_count_DH4/outs",
+  filename = "/filtered_feature_bc_matrix.h5",
+  assay = "Spatial",
+  slice = "DH4_2",
+  filter.matrix = TRUE,
+  to.upper = FALSE,
+  image = NULL,
+)
+
+mt.genes <- rownames(DH4_1)[grep("^MT-",rownames(DH4_1))]
+C<-GetAssayData(object = DH4_1, slot = "counts")
+percent.mito <- colSums(C[mt.genes,])/Matrix::colSums(C)*100
+DH4_1 <- AddMetaData(DH4_1, percent.mito, col.name = "percent.mito")
+DH4_1 <- DH4_1[-(which(rownames(DH4_1) %in% as.factor(mt.genes))),]
+
+DH4_1 <- SCTransform(DH4_1, assay = "Spatial", verbose = FALSE)
+
+DH4_1 <- RunPCA(DH4_1, assay = "SCT", verbose = FALSE)
+DH4_1 <- FindNeighbors(DH4_1, reduction = "pca", dims = 1:30)
+DH4_1 <- FindClusters(DH4_1, verbose = FALSE, resolution = 0.8)
+DH4_1 <- RunUMAP(DH4_1, reduction = "pca", dims = 1:30)
+
+DimPlot(DH4_1, reduction = "umap", label = TRUE)
+SpatialDimPlot(DH4_1, image.alpha = 0, label = FALSE, pt.size.factor = 1.4)
+
+allen_reference <- readRDS("/scratch/mshruv003/visium_08_10_21/Allen_Brain_Data/allen.rds")
+library(dplyr)
+allen_reference <- SCTransform(allen_reference, ncells = 3000, verbose = FALSE) %>%
+    RunPCA(verbose = FALSE) %>%
+    RunUMAP(dims = 1:30)
+	
+anchors <- FindTransferAnchors(reference = allen_reference, query = DH4_1, normalization.method = "SCT")
+predictions.assay <- TransferData(anchorset = anchors, refdata = allen_reference$subclass_label, prediction.assay = TRUE,
+    weight.reduction = DH4_1[["pca"]], dims = 1:30)
+DH4_1[["predictions"]] <- predictions.assay
+
+DefaultAssay(DH4_1) <- "predictions"
+SpatialFeaturePlot(DH4_1, features = c("L2/3 IT", "L4"), pt.size.factor = 1.6, ncol = 2, crop = TRUE)
+
+saveRDS(DH4_1, file = "juvenile_2nd_15yr_DH4_1_seurat.rds")
+
+DH1 <- Load10X_Spatial(
+  data.dir = "/scratch/mshruv003/visium_08_10_21/Hockman_Visium/X201SC21082979-Z01-F001_01/raw_data/run_spaceranger_count_DH1a/outs",
+  filename = "/filtered_feature_bc_matrix.h5",
+  assay = "Spatial",
+  slice = "DH1_1",
+  filter.matrix = TRUE,
+  to.upper = FALSE,
+  image = NULL,
+)
+
+mt.genes <- rownames(DH1)[grep("^MT-",rownames(DH1))]
+C<-GetAssayData(object = DH1, slot = "counts")
+percent.mito <- colSums(C[mt.genes,])/Matrix::colSums(C)*100
+DH1 <- AddMetaData(DH1, percent.mito, col.name = "percent.mito")
+DH1 <- DH1[-(which(rownames(DH1) %in% as.factor(mt.genes))),]
+
+DH1 <- SCTransform(DH1, assay = "Spatial", verbose = FALSE)
+
+DH1 <- RunPCA(DH1, assay = "SCT", verbose = FALSE)
+DH1 <- FindNeighbors(DH1, reduction = "pca", dims = 1:30)
+DH1 <- FindClusters(DH1, verbose = FALSE, resolution = 0.8)
+DH1 <- RunUMAP(DH1, reduction = "pca", dims = 1:30)
+
+DimPlot(DH1, reduction = "umap", label = TRUE)
+SpatialDimPlot(DH1, image.alpha = 0, label = FALSE, pt.size.factor = 1.4)
+
+allen_reference <- readRDS("/scratch/mshruv003/visium_08_10_21/Allen_Brain_Data/allen.rds")
+library(dplyr)
+allen_reference <- SCTransform(allen_reference, ncells = 3000, verbose = FALSE) %>%
+    RunPCA(verbose = FALSE) %>%
+    RunUMAP(dims = 1:30)
+	
+anchors <- FindTransferAnchors(reference = allen_reference, query = DH1, normalization.method = "SCT")
+predictions.assay <- TransferData(anchorset = anchors, refdata = allen_reference$subclass_label, prediction.assay = TRUE,
+    weight.reduction = DH1[["pca"]], dims = 1:30)
+DH1[["predictions"]] <- predictions.assay
+
+DefaultAssay(DH1) <- "predictions"
+SpatialFeaturePlot(DH1, features = c("L2/3 IT", "L4"), pt.size.factor = 1.6, ncol = 2, crop = TRUE)
+
+saveRDS(DH1, file = "juvenile_first15yr_DH1_seurat.rds")
+
+
+DH2 <- Load10X_Spatial(
+  data.dir = "/scratch/mshruv003/visium_08_10_21/Hockman_Visium/X201SC21082979-Z01-F001_01/raw_data/run_spaceranger_count_DH2a/outs",
+  filename = "/filtered_feature_bc_matrix.h5",
+  assay = "Spatial",
+  slice = "DH2_1",
+  filter.matrix = TRUE,
+  to.upper = FALSE,
+  image = NULL,
+)
+
+mt.genes <- rownames(DH2)[grep("^MT-",rownames(DH2))]
+C<-GetAssayData(object = DH2, slot = "counts")
+percent.mito <- colSums(C[mt.genes,])/Matrix::colSums(C)*100
+DH2 <- AddMetaData(DH2, percent.mito, col.name = "percent.mito")
+DH2 <- DH2[-(which(rownames(DH2) %in% as.factor(mt.genes))),]
+
+DH2 <- SCTransform(DH2, assay = "Spatial", verbose = FALSE)
+
+DH2 <- RunPCA(DH2, assay = "SCT", verbose = FALSE)
+DH2 <- FindNeighbors(DH2, reduction = "pca", dims = 1:30)
+DH2 <- FindClusters(DH2, verbose = FALSE, resolution = 0.8)
+DH2 <- RunUMAP(DH2, reduction = "pca", dims = 1:30)
+
+DimPlot(DH2, reduction = "umap", label = TRUE)
+SpatialDimPlot(DH2, image.alpha = 0, label = FALSE, pt.size.factor = 1.4)
+
+allen_reference <- readRDS("/scratch/mshruv003/visium_08_10_21/Allen_Brain_Data/allen.rds")
+library(dplyr)
+allen_reference <- SCTransform(allen_reference, ncells = 3000, verbose = FALSE) %>%
+    RunPCA(verbose = FALSE) %>%
+    RunUMAP(dims = 1:30)
+	
+anchors <- FindTransferAnchors(reference = allen_reference, query = DH2, normalization.method = "SCT")
+predictions.assay <- TransferData(anchorset = anchors, refdata = allen_reference$subclass_label, prediction.assay = TRUE,
+    weight.reduction = DH2[["pca"]], dims = 1:30)
+DH2[["predictions"]] <- predictions.assay
+
+DefaultAssay(DH2) <- "predictions"
+SpatialFeaturePlot(DH2, features = c("L2/3 IT", "L4"), pt.size.factor = 1.6, ncol = 2, crop = TRUE)
+
+saveRDS(DH2, file = "juvenile_first15yr_DH2_seurat.rds")
+
+
+DH3 <- Load10X_Spatial(
+  data.dir = "/scratch/mshruv003/visium_08_10_21/Hockman_Visium/X201SC21082979-Z01-F001_02/raw_data/run_spaceranger_count_DH3a/outs",
+  filename = "/filtered_feature_bc_matrix.h5",
+  assay = "Spatial",
+  slice = "DH3_1",
+  filter.matrix = TRUE,
+  to.upper = FALSE,
+  image = NULL,
+)
+
+mt.genes <- rownames(DH3)[grep("^MT-",rownames(DH3))]
+C<-GetAssayData(object = DH3, slot = "counts")
+percent.mito <- colSums(C[mt.genes,])/Matrix::colSums(C)*100
+DH3 <- AddMetaData(DH3, percent.mito, col.name = "percent.mito")
+DH3 <- DH3[-(which(rownames(DH3) %in% as.factor(mt.genes))),]
+
+DH3 <- SCTransform(DH3, assay = "Spatial", verbose = FALSE)
+
+DH3 <- RunPCA(DH3, assay = "SCT", verbose = FALSE)
+DH3 <- FindNeighbors(DH3, reduction = "pca", dims = 1:30)
+DH3 <- FindClusters(DH3, verbose = FALSE, resolution = 0.8)
+DH3 <- RunUMAP(DH3, reduction = "pca", dims = 1:30)
+
+DimPlot(DH3, reduction = "umap", label = TRUE)
+SpatialDimPlot(DH3, image.alpha = 0, label = FALSE, pt.size.factor = 1.4)
+
+allen_reference <- readRDS("/scratch/mshruv003/visium_08_10_21/Allen_Brain_Data/allen.rds")
+library(dplyr)
+allen_reference <- SCTransform(allen_reference, ncells = 3000, verbose = FALSE) %>%
+    RunPCA(verbose = FALSE) %>%
+    RunUMAP(dims = 1:30)
+	
+anchors <- FindTransferAnchors(reference = allen_reference, query = DH3, normalization.method = "SCT")
+predictions.assay <- TransferData(anchorset = anchors, refdata = allen_reference$subclass_label, prediction.assay = TRUE,
+    weight.reduction = DH3[["pca"]], dims = 1:30)
+DH3[["predictions"]] <- predictions.assay
+
+DefaultAssay(DH3) <- "predictions"
+SpatialFeaturePlot(DH3, features = c("L2/3 IT", "L4"), pt.size.factor = 1.6, ncol = 2, crop = TRUE)
+
+saveRDS(DH3, file = "adult_31yr_DH3_seurat.rds")
+
+
+DH4 <- Load10X_Spatial(
+  data.dir = "/scratch/mshruv003/visium_08_10_21/Hockman_Visium/X201SC21082979-Z01-F001_02/raw_data/run_spaceranger_count_DH4a/outs",
+  filename = "/filtered_feature_bc_matrix.h5",
+  assay = "Spatial",
+  slice = "DH4_1",
+  filter.matrix = TRUE,
+  to.upper = FALSE,
+  image = NULL,
+)
+
+mt.genes <- rownames(DH4)[grep("^MT-",rownames(DH4))]
+C<-GetAssayData(object = DH4, slot = "counts")
+percent.mito <- colSums(C[mt.genes,])/Matrix::colSums(C)*100
+DH4 <- AddMetaData(DH4, percent.mito, col.name = "percent.mito")
+DH4 <- DH4[-(which(rownames(DH4) %in% as.factor(mt.genes))),]
+
+DH4 <- SCTransform(DH4, assay = "Spatial", verbose = FALSE)
+
+DH4 <- RunPCA(DH4, assay = "SCT", verbose = FALSE)
+DH4 <- FindNeighbors(DH4, reduction = "pca", dims = 1:30)
+DH4 <- FindClusters(DH4, verbose = FALSE, resolution = 0.8)
+DH4 <- RunUMAP(DH4, reduction = "pca", dims = 1:30)
+
+DimPlot(DH4, reduction = "umap", label = TRUE)
+SpatialDimPlot(DH4, image.alpha = 0, label = FALSE, pt.size.factor = 1.4)
+
+allen_reference <- readRDS("/scratch/mshruv003/visium_08_10_21/Allen_Brain_Data/allen.rds")
+library(dplyr)
+allen_reference <- SCTransform(allen_reference, ncells = 3000, verbose = FALSE) %>%
+    RunPCA(verbose = FALSE) %>%
+    RunUMAP(dims = 1:30)
+	
+anchors <- FindTransferAnchors(reference = allen_reference, query = DH4, normalization.method = "SCT")
+predictions.assay <- TransferData(anchorset = anchors, refdata = allen_reference$subclass_label, prediction.assay = TRUE,
+    weight.reduction = DH4[["pca"]], dims = 1:30)
+DH4[["predictions"]] <- predictions.assay
+
+DefaultAssay(DH4) <- "predictions"
+SpatialFeaturePlot(DH4, features = c("L2/3 IT", "L4"), pt.size.factor = 1.6, ncol = 2, crop = TRUE)
+
+saveRDS(DH4, file = "adult_31yr_DH4_seurat.rds")
+
+
 #Adding leiden clusters into seurat objects
 juvenile_4yr_DH1 <- readRDS("/scratch/mshruv003/Seurat_objects_converted_from_cell2loc/updated_visium_4yr_seurat.rds")
 scanpy_4yr_DH1 <- read.csv("/scratch/mshruv003/Updated_integrated_MTG_annotation/metadata_leiden_n21_res08.csv")
